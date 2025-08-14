@@ -25,8 +25,7 @@ def reservation_dict(doc):
         "quantity": doc.get("qty") or doc.get("quantity"),
         "status": doc.get("status"),
         "client_token": doc.get("client_token"),
-        "expires_at": doc.get("exttl sweeps ky hota h" \
-        "pires_at"),
+        "expires_at": doc.get("expires_at"),
         "created_at": doc.get("created_at"),
         "updated_at": doc.get("updated_at")
 
