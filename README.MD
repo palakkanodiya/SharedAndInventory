@@ -1,33 +1,32 @@
-# Shared and Inventory
+# ReservationAndShared
 
-A scalable backend system for shared resources and inventory management, built with Django, MongoDB, Celery, Redis, and Docker. Supports async jobs, health checks, and admin APIs.
+A scalable backend system built with Django, MongoDB (sharded), Celery, and Redis—fully containerized using Docker Compose with automated cluster setup.
+
+---
 
 ## Tech Stack
 
-- **Django** – Web framework
-- **MongoDB** – NoSQL database
-- **Celery + Redis** – Background task processing
-- **Docker + Docker Compose** – Containerized development
+**Backend**: Django  
+**Database**: MongoDB (Sharded + Replica Sets)  
+**Task Queue**: Celery + Redis  
+**Containerization**: Docker + Docker Compose  
 
-## Features
 
-- Async reconciliation jobs via Celery
-- Health check and metrics endpoints
-- Admin APIs for internal operations
-- Dockerized setup for easy local development
-- MongoDB collections instead of Django ORM
+---
 
-## Getting Started
+## Setup Instructions
 
-### Prerequisites
-
-- Docker & Docker Compose
-- Python 3.10+
-- MongoDB running locally or via Docker
-
-### Setup
+### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/shared-and-inventory.git
-cd SharedAndInventory
-docker-compose up --build
+git clone https://github.com/your-username/ReservationService.git
+cd ReservationService
+
+```
+
+## Start services, install dependencies, migrate DB, and run server
+
+docker compose up -d
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
