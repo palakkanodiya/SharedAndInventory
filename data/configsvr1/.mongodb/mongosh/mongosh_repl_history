@@ -1,0 +1,13 @@
+rs.initiate({ _id: "configReplSet", configsvr: true, members: [ { _id: 0, host: "configsvr1:27019" }] });
+docker restart mongos
+})
+  ]
+    { _id: 0, host: "configsvr1:27019" }
+  members: [
+  configsvr: true,
+  _id: "configReplSet",
+rs.initiate({
+rs.status()
+exit
+docker restart mongos
+rs.status()

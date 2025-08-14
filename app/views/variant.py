@@ -18,9 +18,9 @@ class VariantListView(APIView):
 
     def post(self, request):
         serializer = VariantSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)  # Validate input
+        serializer.is_valid(raise_exception=True)  #Validate input
         client = get_mongoo_client()
-        client.invdb.variants.insert_one(serializer.validated_data) #automatic generate krra h id mongo
+        client.invdb.variants.insert_one(serializer.validated_data)
         return Response({"status": "created"}, status=201)
 
 

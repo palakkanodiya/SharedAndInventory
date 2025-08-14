@@ -2,25 +2,121 @@ version: '3.8'
 
 services:
   django:
-    build: .
+    image: my-django-image
     command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
+    volumes:
+      - .:/code
+    working_dir: /code
     depends_on:
-      - mongo
       - redis
+      - mongos
 
   redis:
     image: redis:7
     ports:
       - "6379:6379"
 
-  mongo:
+  configsvr1:
     image: mongo:6.0
-    container_name: mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: appuser
-      MONGO_INITDB_ROOT_PASSWORD: password
+    container_name: configsvr1
+    command: mongod --configsvr --replSet configReplSet --port 27019
+    ports:
+      - "27019:27019"
+    volumes:
+      - ./data/configsvr1:/data/db
+    networks:
+      - mongo-cluster
+
+  shard1a:
+    image: mongo:6.0
+    container_name: shard1a
+    command: mongod --shardsvr --replSet shard1 --port 27018
+    ports:
+      - "27018:27018"
+    volumes:
+      - ./data/shard1a:/data/db
+    networks:
+      - mongo-cluster
+
+  shard1b:
+    image: mongo:6.0
+    container_name: shard1b
+    command: mongod --shardsvr --replSet shard1 --port 27020
+    ports:
+      - "27020:27020"
+    volumes:
+      - ./data/shard1b:/data/db
+    networks:
+      - mongo-cluster
+
+  shard1c:
+    image: mongo:6.0
+    container_name: shard1c
+    command: mongod --shardsvr --replSet shard1 --port 27021
+    ports:
+      - "27021:27021"
+    volumes:
+      - ./data/shard1c:/data/db
+    networks:
+      - mongo-cluster
+
+  shard2a:
+    image: mongo:6.0
+    container_name: shard2a
+    command: ["mongod", "--shardsvr", "--replSet", "shard2", "--port", "27018"]
+    ports:
+      - "27118:27018"
+    volumes:
+      - ./data/shard2a:/data/db
+    networks:
+      - mongo-cluster
+
+  shard2b:
+    image: mongo:6.0
+    container_name: shard2b
+    command: ["mongod", "--shardsvr", "--replSet", "shard2", "--port", "27020"]
+    ports:
+      - "27120:27020"
+    volumes:
+      - ./data/shard2b:/data/db
+    networks:
+      - mongo-cluster
+
+  shard2c:
+    image: mongo:6.0
+    container_name: shard2c
+    command: ["mongod", "--shardsvr", "--replSet", "shard2", "--port", "27021"]
+    ports:
+      - "27121:27021"
+    volumes:
+      - ./data/shard2c:/data/db
+    networks:
+      - mongo-cluster
+
+  mongos:
+    image: mongo:6.0
+    container_name: mongos
+    depends_on:
+      - configsvr1
+      - shard1a
+      - shard1b
+      - shard1c
+      - shard2a
+      - shard2b
+      - shard2c
+    command: >
+      sh -c "
+        sleep 15 &&
+        mongos --configdb configReplSet/configsvr1:27019 --port 27017"
     ports:
       - "27017:27017"
-    
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    networks:
+      - mongo-cluster
+
+networks:
+  mongo-cluster:
+    driver: bridge

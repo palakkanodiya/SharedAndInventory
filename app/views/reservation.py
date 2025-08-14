@@ -20,7 +20,7 @@ class ReservationView(APIView):
         if not variant or variant.get("available", 0) < data["qty"]:
             return Response({"error": "Insufficient stock"}, status=409)
 
-        #atomic hold(decrement available, increment reserved)
+        ##3atomic hold(decrement available, increment reserved)
         client.invdb.variants.update_one(
             {"variant_id": data["variant_id"], "available": {"$gte": data["qty"]}},
             {"$inc": {"available": -data["qty"], "reserved": data["qty"]}}
@@ -81,7 +81,7 @@ class ReservationCancelView(APIView):
         return Response({"status": "CANCELED"})
     
 #audit
-def write_audit(actor, action, before, after, route, ip_hash):
+def write_audit(actor, action, before, after, route):
     client = get_mongoo_client()
     audit = {
         "actor": actor,
@@ -89,7 +89,6 @@ def write_audit(actor, action, before, after, route, ip_hash):
         "before": before,
         "after": after,
         "route": route,
-        "ip_hash": ip_hash,
         "created_at": datetime.utcnow()
     }
     client.invdb.audits.insert_one(audit)
