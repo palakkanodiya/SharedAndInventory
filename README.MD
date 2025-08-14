@@ -1,32 +1,38 @@
 # ReservationAndShared
 
-A scalable backend system built with Django, MongoDB (sharded), Celery, and Redis—fully containerized using Docker Compose with automated cluster setup.
+A scalable backend system built with Django, MongoDB (Sharded), Celery, and Redis — fully containerized using Docker Compose with automated cluster setup.
 
 ---
 
 ## Tech Stack
 
-**Backend**: Django  
-**Database**: MongoDB (Sharded + Replica Sets)  
-**Task Queue**: Celery + Redis  
-**Containerization**: Docker + Docker Compose  
-
+- **Language**: Python 3.11  
+- **Backend**: Django 5 + Django REST Framework  
+- **Database**: MongoDB (Sharded + Replica Sets)  
+- **Task Queue**: Celery + Redis  
+- **Containerization**: Docker + Docker Compose  
 
 ---
 
 ## Setup Instructions
 
-### 1. Clone the repo
-
+### Clone the Repository
 ```bash
 git clone https://github.com/your-username/ReservationService.git
 cd ReservationService
 
 ```
 
-## Start services, install dependencies, migrate DB, and run server
+### Create Virtual Environment & Install Dependencies
+    python3.11 -m venv venv
+    source venv/bin/activate    # Mac/Linux
+    venv\Scripts\activate       # Windows
+    pip install -r requirements.txt
 
-docker compose up -d
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
+
+
+## Start services,migrate DB, and run server
+
+    docker compose up -d
+    python manage.py migrate
+    python manage.py runserver
